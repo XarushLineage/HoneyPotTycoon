@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Honey Pot Tycoon: Final Clean</title>
+    <title>Honey Pot Tycoon: Themes & Mobile</title>
     <style>
+        /* --- COLOR PALETTES --- */
         :root {
+            /* Light Mode (Default) */
             --primary: #f9a825;
             --primary-dark: #c17900;
             --secondary: #fff9c4;
@@ -14,7 +16,28 @@
             --shop-bg: #ffffff;
             --text-color: #3e2723;
             --bg-color: #fffde7;
-            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --panel-bg: #ffffff;
+            --card-border: #eee;
+            --shadow: rgba(0,0,0,0.1);
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --nav-text: #333;
+        }
+
+        body.dark-mode {
+            /* Dark Mode */
+            --primary: #ffca28;
+            --primary-dark: #ff6f00;
+            --secondary: #3e2723;
+            --accent: #ff8f00;
+            --lab-bg: #263238;
+            --shop-bg: #37474f;
+            --text-color: #eceff1;
+            --bg-color: #1a1a1a;
+            --panel-bg: #263238;
+            --card-border: #455a64;
+            --shadow: rgba(0,0,0,0.5);
+            --nav-bg: rgba(38, 50, 56, 0.95);
+            --nav-text: #eceff1;
         }
 
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
@@ -22,13 +45,14 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: var(--font-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             height: 100vh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         /* --- Header --- */
@@ -39,11 +63,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            z-index: 10;
+            box-shadow: 0 2px 5px var(--shadow);
+            z-index: 100;
             flex-shrink: 0;
         }
         h1 { margin: 0; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+        
+        .header-right { display: flex; gap: 15px; align-items: center; }
+
         .btn-small {
             background: rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.5);
@@ -54,6 +81,42 @@
             font-size: 0.8rem;
         }
         .btn-small:hover { background: rgba(0,0,0,0.4); }
+
+        /* --- Theme Dropdown --- */
+        .theme-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .theme-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+        .theme-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: var(--panel-bg);
+            min-width: 100px;
+            box-shadow: 0 4px 8px var(--shadow);
+            z-index: 101;
+            border-radius: 4px;
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+        }
+        .theme-content a {
+            color: var(--text-color);
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .theme-content a:hover { background-color: var(--secondary); color: var(--primary-dark); }
+        .theme-dropdown:hover .theme-content { display: block; }
 
         /* --- Layout --- */
         #game-container { display: flex; flex: 1; overflow: hidden; height: 100%; }
@@ -74,9 +137,10 @@
         .lab-zone {
             flex: 0 0 320px;
             background: var(--lab-bg);
-            border-right: 1px solid #ddd;
+            border-right: 1px solid var(--card-border);
         }
         .lab-zone .panel-header { background: #bbdefb; color: #0d47a1; }
+        body.dark-mode .lab-zone .panel-header { background: #455a64; color: #81d4fa; }
 
         .click-zone {
             flex: 1;
@@ -84,7 +148,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.3);
+            background: var(--bg-color);
             z-index: 1;
             position: relative;
         }
@@ -92,13 +156,11 @@
         .shop-zone {
             flex: 0 0 350px;
             background: var(--shop-bg);
-            border-left: 1px solid #ddd;
+            border-left: 1px solid var(--card-border);
         }
-        .shop-zone .panel-header { background: #fff8e1; color: var(--primary-dark); border-bottom: 1px solid #eee; }
+        .shop-zone .panel-header { background: var(--secondary); color: var(--primary-dark); }
 
         /* --- Components --- */
-        
-        /* The Jar Button */
         .honey-jar-container {
             position: relative;
             cursor: pointer;
@@ -114,7 +176,7 @@
             background: radial-gradient(circle at 30% 30%, #ffecb3, var(--primary));
             border-radius: 50%;
             border: 8px solid var(--primary-dark);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px var(--shadow);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -124,21 +186,24 @@
 
         .stats-box {
             text-align: center;
-            background: rgba(255,255,255,0.95);
+            background: var(--panel-bg);
             padding: 15px 30px;
             border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px var(--shadow);
             width: 80%;
             max-width: 350px;
             z-index: 5;
+            border: 1px solid var(--card-border);
         }
         #total-honey { font-size: 2.5rem; font-weight: 800; color: var(--primary-dark); line-height: 1; }
+        body.dark-mode #total-honey { color: var(--primary); }
         #hps-display { color: #795548; font-size: 1.1rem; margin-top: 5px; }
+        body.dark-mode #hps-display { color: #b0bec5; }
 
         /* --- Cards --- */
         .item-card {
-            background: white;
-            border: 1px solid #eee;
+            background: var(--panel-bg);
+            border: 1px solid var(--card-border);
             border-radius: 8px;
             margin-bottom: 10px;
             padding: 10px;
@@ -152,7 +217,7 @@
         .item-card:hover:not(.disabled) {
             transform: translateY(-2px);
             border-color: var(--primary);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 8px var(--shadow);
         }
 
         .item-card.disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(0.5); }
@@ -162,14 +227,15 @@
         .item-name { font-weight: bold; font-size: 0.9rem; display: block; }
         .item-cost { color: var(--accent); font-weight: bold; font-size: 0.85rem; }
         .item-desc { font-size: 0.75rem; color: #666; display: block; margin-top: 2px;}
+        body.dark-mode .item-desc { color: #b0bec5; }
         
         .item-badge {
-            background: #e0e0e0;
+            background: var(--card-border);
             border-radius: 10px;
             padding: 2px 8px;
             font-size: 0.7rem;
             font-weight: bold;
-            color: #555;
+            color: var(--text-color);
             float: right;
         }
 
@@ -181,8 +247,8 @@
             font-size: 1.2rem;
             pointer-events: none;
             animation: floatUp 1s ease-out forwards;
-            text-shadow: 1px 1px 0 #fff;
-            z-index: 100;
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.2);
+            z-index: 200;
         }
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
@@ -215,16 +281,63 @@
             100% { opacity: 0; transform: translateY(-10px); }
         }
 
+        /* --- MOBILE NAVIGATION --- */
+        .mobile-nav {
+            display: none; /* Hidden on desktop */
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--nav-bg);
+            border-top: 1px solid var(--card-border);
+            z-index: 50;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px var(--shadow);
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--nav-text);
+            font-size: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        .nav-btn span { font-size: 0.7rem; margin-top: 2px; font-weight: bold; }
+        .nav-btn.active { opacity: 1; color: var(--accent); }
+
         /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
         ::-webkit-scrollbar-track { background: transparent; }
+        body.dark-mode ::-webkit-scrollbar-thumb { background: #555; }
 
-        /* Mobile */
+        /* Mobile Logic */
         @media (max-width: 900px) {
-            #game-container { flex-direction: column-reverse; overflow-y: auto; }
-            .panel { height: auto; max-height: 40vh; border-right: none; border-bottom: 1px solid #ddd; }
-            .click-zone { min-height: 40vh; border-bottom: 1px solid #ddd; }
+            #game-container { 
+                flex-direction: column; 
+                overflow-y: auto; 
+                padding-bottom: 60px; /* Space for nav bar */
+            }
+            
+            /* Reorder zones: Clicker (Top), Shop (Mid), Lab (Bot) */
+            .lab-zone, .shop-zone, .click-zone {
+                width: 100%;
+                flex: none; /* Disable flex grow, use height */
+                border: none;
+                border-bottom: 1px solid var(--card-border);
+            }
+            
+            .click-zone { order: 1; min-height: 40vh; }
+            .shop-zone { order: 2; min-height: 40vh; }
+            .lab-zone { order: 3; min-height: 40vh; }
+
+            .mobile-nav { display: flex; }
             .honey-jar { width: 150px; height: 150px; font-size: 4rem; }
         }
     </style>
@@ -233,7 +346,15 @@
 
 <header>
     <h1>🍯 Honey Pot Tycoon</h1>
-    <div class="header-controls">
+    <div class="header-right">
+        <!-- Theme Dropdown -->
+        <div class="theme-dropdown">
+            <button class="theme-btn" id="theme-toggle-btn">☀️</button>
+            <div class="theme-content">
+                <a onclick="setTheme('light')">☀️ Light</a>
+                <a onclick="setTheme('dark')">🌙 Dark</a>
+            </div>
+        </div>
         <button class="btn-small" onclick="Game.resetGame()">Reset</button>
     </div>
 </header>
@@ -241,7 +362,7 @@
 <div id="game-container">
     
     <!-- LEFT: TECH LAB (Upgrades) -->
-    <div class="panel lab-zone">
+    <div class="panel lab-zone" id="zone-lab">
         <div class="panel-header">🔬 Tech Lab</div>
         <div id="lab-list">
             <!-- Lab Items injected here -->
@@ -249,7 +370,7 @@
     </div>
 
     <!-- CENTER: CLICKER -->
-    <div class="click-zone" id="click-zone">
+    <div class="panel click-zone" id="zone-clicker">
         <div class="honey-jar-container" id="honey-btn">
             <div class="honey-jar">🍯</div>
         </div>
@@ -261,13 +382,29 @@
     </div>
 
     <!-- RIGHT: SHOP (Buildings) -->
-    <div class="panel shop-zone">
+    <div class="panel shop-zone" id="zone-shop">
         <div class="panel-header">🛒 Market</div>
         <div id="shop-list">
             <!-- Shop Items injected here -->
         </div>
     </div>
 
+</div>
+
+<!-- Mobile Navigation -->
+<div class="mobile-nav">
+    <button class="nav-btn" onclick="scrollToZone('zone-clicker')" id="nav-clicker">
+        🍯
+        <span>Click</span>
+    </button>
+    <button class="nav-btn" onclick="scrollToZone('zone-shop')" id="nav-shop">
+        🛒
+        <span>Shop</span>
+    </button>
+    <button class="nav-btn" onclick="scrollToZone('zone-lab')" id="nav-lab">
+        🔬
+        <span>Lab</span>
+    </button>
 </div>
 
 <div class="toast-container" id="toast-container"></div>
@@ -406,7 +543,8 @@ let State = {
     totalHoney: 0,
     buildings: {}, 
     upgradesBought: [],
-    clickMult: 1.0 
+    clickMult: 1.0,
+    theme: 'light'
 };
 
 Config.buildings.forEach(b => State.buildings[b.id] = 0);
@@ -481,6 +619,37 @@ function showToast(msg) {
     setTimeout(() => t.remove(), 3100);
 }
 
+function setTheme(theme) {
+    State.theme = theme;
+    if (theme === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('theme-toggle-btn').textContent = '🌙';
+    } else {
+        document.body.classList.remove('dark-mode');
+        document.getElementById('theme-toggle-btn').textContent = '☀️';
+    }
+    Game.save();
+}
+
+function scrollToZone(id) {
+    const el = document.getElementById(id);
+    if(el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+        updateActiveNav(id);
+    }
+}
+
+function updateActiveNav(zoneId) {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    const idMap = {
+        'zone-clicker': 'nav-clicker',
+        'zone-shop': 'nav-shop',
+        'zone-lab': 'nav-lab'
+    };
+    const btn = document.getElementById(idMap[zoneId]);
+    if(btn) btn.classList.add('active');
+}
+
 /**
  * CORE LOGIC
  */
@@ -491,6 +660,10 @@ const Game = {
         this.renderShop();
         this.renderLab();
         this.attachEvents();
+        
+        // Set initial theme
+        setTheme(State.theme || 'light');
+        
         setInterval(() => this.tick(), 1000 / 30);
         setInterval(() => this.save(), 10000);
     },
@@ -619,16 +792,12 @@ const Game = {
         const available = Config.upgrades.filter(u => {
             if (State.upgradesBought.includes(u.id)) return false;
 
-            // New Clicker Logic: Sequential
             if (u.type === 'click') {
-                // Level 1 is always visible
                 if (u.level === 1) return true;
-                // Check if previous level is bought
                 const prevId = `click_lvl_${u.level - 1}`;
                 return State.upgradesBought.includes(prevId);
             }
 
-            // Building logic
             if (State.buildings[u.target] === 0) return false;
             if (State.buildings[u.target] < u.reqCount) return false;
             if (u.level > 1) {
@@ -688,10 +857,10 @@ const Game = {
         }, {passive: false});
     },
 
-    save() { localStorage.setItem('honeyTycoonSaveV6', JSON.stringify(State)); },
+    save() { localStorage.setItem('honeyTycoonSaveV7', JSON.stringify(State)); },
     
     load() {
-        const saved = localStorage.getItem('honeyTycoonSaveV6');
+        const saved = localStorage.getItem('honeyTycoonSaveV7');
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
@@ -702,7 +871,7 @@ const Game = {
 
     resetGame() {
         if(confirm("Wipe all save data?")) {
-            localStorage.removeItem('honeyTycoonSaveV6');
+            localStorage.removeItem('honeyTycoonSaveV7');
             location.reload();
         }
     }
